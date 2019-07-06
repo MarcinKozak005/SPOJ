@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <vector>
 #include <algorithm>
 
 using namespace std;
@@ -50,6 +51,7 @@ void dodaj(string &fst, string &snd, string & res)
         //cout<<cyfra;
         res.push_back(cyfra);
       }
+      str_reverse(res);
 }
 
 void odejmij(string &fst, string &snd, string & res)
@@ -86,9 +88,10 @@ void odejmij(string &fst, string &snd, string & res)
                res.push_back(fst_copy[pos1]);
            }
        }
+       str_reverse(res);
 }
 
-void mnoz(string & fst, string &snd, string &res)
+void mnoz(string &fst, string &snd, string &res, vector<string> & str_vec)
 {
         res.erase(0);
         int z1,z2;
@@ -97,9 +100,13 @@ void mnoz(string & fst, string &snd, string &res)
         int r_mod;
         int pos1=fst.length()-1;
         int pos2= snd.length()-1;
-        string str_tab[(snd.length())];
+        //vector<string> str_vec;
        for(;pos2>=0;pos2--)
        {
+           overflow=0;
+           if(snd[pos2]=='0')
+           {str_vec.push_back("0");continue;}
+           
            res.erase(0);
            for(;pos1>=0;pos1--)
            {
@@ -110,13 +117,42 @@ void mnoz(string & fst, string &snd, string &res)
                overflow = (product-r_mod)/10;
                res.push_back(r_mod+48);
            }
-        //   str_reverse(res);
-        //   str_tab[snd.length()-pos2] = res;
+           if(overflow!=0) res.push_back(overflow+48);
+           pos1=fst.length()-1;
+           str_reverse(res);
+           str_vec.push_back(res);
+           //cout<<"asdasda->"<<res<<endl;
        }
-    //   for(int i=0; i<snd.length();i++)
-    //   {
-    //       cout<<str_tab[i];
-    //   }
+       
+       //dodanie zer
+       for(int i=0;i<str_vec.size();i++)
+       {
+           string a = str_vec[i];
+           //if(a=="0") continue;
+           for(int j=0;j<i;j++)
+           {
+               a+="0";
+           }
+           str_vec[i]=a;
+       }
+       
+       string helper2;
+       res=str_vec[0];
+       for(int i=1;i<str_vec.size();i++)
+       {
+           //cout<<"Res: "<<res<<" + "<< str_vec[i]<<" = ";
+           dodaj(res,str_vec[i],helper2);
+           //cout<<helper2<<endl;
+           res=helper2;
+           helper2.erase(0);
+           //cout<<"Res po h2.rease: "<<res<<endl;
+       }
+       
+       for(int i=1;i<str_vec.size();i++)
+       {
+           str_vec[i].erase(str_vec[i].length()-i);
+       }
+       
 }
 
 void print_add_sub(char znak, string & fst, string &snd, string &res)
@@ -134,8 +170,38 @@ void print_add_sub(char znak, string & fst, string &snd, string &res)
   
 }
 
+void print_mul(string & fst, string &snd, string &res, vector<string> str_vec)
+{
+    int max_all = max( max(fst.length(),snd.length()+1),res.length());
+    int max_two = max(fst.length(),snd.length()+1);
+    
+    print_spaces(max_all-fst.length());
+    cout<<fst<<endl;
+    print_spaces(max_all - snd.length() -1);
+    cout<<'*';
+    cout<<snd<<endl;
+    print_spaces(max_all-max_two);
+    
+    if(str_vec.size()!=1)
+    {
+        print_dash(max_two);
+    for(int i=0;i<str_vec.size();i++)
+    {
+        print_spaces(max_all-i-str_vec[i].length());
+        cout<<str_vec[i]<<endl;
+    }
+    }
+    print_dash(max_all);
+    cout<<res<<endl;
+}
+
 int main()
 {
+    
+    int n;
+    cin>>n;
+    for(int i=0;i<n;i++)
+    {
     //SPLIT
    string input;
    cin>>input;
@@ -148,45 +214,33 @@ int main()
    }
    string first = input.substr(0,counter1);
    string second = input.substr(counter1+1);
-   /*
-   cout<< first <<endl;
-   cout<< znak <<endl;
-   cout<< second <<endl;
-   */
-   //SPLIT
-   
-   
+
   
    int mov = 0;
    string wynik;
    string helper;
 
-   //cout<<pos1<<" "<<pos2<<endl;
-   //do mnożenia
-
-   string helper2;
-   //do mnożenia
    if(znak=='+')
    {
        dodaj(first,second,helper);
    }
-   
    else if (znak == '-')
    {
        odejmij(first,second,helper);
+       delete_leading_0s(helper);
    }
-   
    else //znak == '*'
    {
-        mnoz(first,second,helper);
+        vector<string> vec;
+        mnoz(first,second,helper,vec);
+        print_mul(first,second,helper,vec);
    }
    
-  str_reverse(helper);
-  wynik=helper;
-  //do sub
-  delete_leading_0s(wynik);
-  //do sub
-  print_add_sub(znak,first,second,wynik);
+      wynik=helper;
+
+      if(znak!='*') print_add_sub(znak,first,second,wynik);
+      cout<<"\n\n";
+    }//od inputów
    
    return 0;
 }
