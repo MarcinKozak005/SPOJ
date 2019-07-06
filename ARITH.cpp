@@ -5,16 +5,24 @@
 
 using namespace std;
 
+//Defined below the main()
+void parseInput(int input_number);
+void add(string &fst, string &snd, string & res);
+void sub(string &fst, string &snd, string & res);
+void mul(string &fst, string &snd, string &res, vector<string> & str_vec);
+void print_add_sub(char znak, string & fst, string &snd, string &res);
+void print_mul(string & fst, string &snd, string &res, vector<string> str_vec);
+
 void print_spaces(int num)
 {
     for(int i=0;i<num;i++) cout<<" ";    
 }
+
 void print_dash(int num)
 {
     for(int i=0;i<num;i++) cout<<"-";
     cout<<"\n";
 }
-
 
 void str_reverse(string& str)
 {
@@ -31,7 +39,63 @@ void delete_leading_0s(string & str)
     }
 }
 
-void dodaj(string &fst, string &snd, string & res)
+
+int main()
+{
+
+    int input_number;
+    cin>>input_number;
+    
+    parseInput(input_number);
+   
+    return 0;
+}
+
+void parseInput(int input_number)
+{
+    for(int i=0; i<input_number; i++)
+    {
+        string input;
+        cin>>input;
+        
+        //Splitting input into: first (argument), sign (operation), second (argument)
+        int field = 0;
+        char sign;
+        while(sign = input[field])
+        {
+            if(sign > 47) field++;
+            else break;
+        }
+        string first = input.substr(0,field);
+        string second = input.substr(field+1);
+        //end of Splitting
+      
+        string result;
+    
+        if(sign == '+')
+        {
+            add(first,second,result);
+            print_add_sub(sign,first,second,result);
+        }
+        else if (sign == '-')
+        {
+            sub(first,second,result);
+            delete_leading_0s(result);
+            print_add_sub(sign,first,second,result);
+        }
+        else // sign == '*'
+        {
+            vector<string> partial_results;
+            
+            mul(first,second,result,partial_results);
+            print_mul(first,second,result,partial_results);
+        }
+        
+        cout<<"\n\n";
+    }
+}
+
+void add(string &fst, string &snd, string & res)
 {
     res.erase(0);
     char cyfra;
@@ -51,10 +115,11 @@ void dodaj(string &fst, string &snd, string & res)
         //cout<<cyfra;
         res.push_back(cyfra);
       }
+      if(overflow!=0) res.push_back(overflow+48);
       str_reverse(res);
 }
 
-void odejmij(string &fst, string &snd, string & res)
+void sub(string &fst, string &snd, string & res)
 {
     string fst_copy(fst);
     res.erase(0);
@@ -91,7 +156,7 @@ void odejmij(string &fst, string &snd, string & res)
        str_reverse(res);
 }
 
-void mnoz(string &fst, string &snd, string &res, vector<string> & str_vec)
+void mul(string &fst, string &snd, string &res, vector<string> & str_vec)
 {
         res.erase(0);
         int z1,z2;
@@ -141,7 +206,7 @@ void mnoz(string &fst, string &snd, string &res, vector<string> & str_vec)
        for(int i=1;i<str_vec.size();i++)
        {
            //cout<<"Res: "<<res<<" + "<< str_vec[i]<<" = ";
-           dodaj(res,str_vec[i],helper2);
+           add(res,str_vec[i],helper2);
            //cout<<helper2<<endl;
            res=helper2;
            helper2.erase(0);
@@ -158,13 +223,15 @@ void mnoz(string &fst, string &snd, string &res, vector<string> & str_vec)
 void print_add_sub(char znak, string & fst, string &snd, string &res)
 {
     int max_length = max( max(fst.length(),snd.length()+1), res.length() );
+    int max_1 = max(snd.length()+1,res.length());
   
     print_spaces(max_length - fst.length());
     cout<<fst<<endl;
     print_spaces(max_length - snd.length() -1);
     cout<<znak;
     cout<<snd<<endl;
-    print_dash(max_length);
+    print_spaces(max_length-max_1);
+    print_dash(max_1);
     print_spaces(max_length - res.length());
     cout<<res;
   
@@ -172,75 +239,36 @@ void print_add_sub(char znak, string & fst, string &snd, string &res)
 
 void print_mul(string & fst, string &snd, string &res, vector<string> str_vec)
 {
-    int max_all = max( max(fst.length(),snd.length()+1),res.length());
-    int max_two = max(fst.length(),snd.length()+1);
+    int max_length = max( max(fst.length(),snd.length()+1), res.length() );
+    int max_1 = max( snd.length() +1, str_vec[0].length() );
+    int max_2;
     
-    print_spaces(max_all-fst.length());
+    print_spaces(max_length-fst.length());
     cout<<fst<<endl;
-    print_spaces(max_all - snd.length() -1);
+    print_spaces(max_length - snd.length() -1);
     cout<<'*';
     cout<<snd<<endl;
-    print_spaces(max_all-max_two);
     
     if(str_vec.size()!=1)
     {
-        print_dash(max_two);
-    for(int i=0;i<str_vec.size();i++)
+        max_2 = max( res.length(), str_vec[str_vec.size()-1].length() );
+        print_spaces(max_length-max_1);
+        print_dash(max_1);
+        for(int i=0;i<str_vec.size();i++)
+        {
+            print_spaces(max_length-i-str_vec[i].length());
+            cout<<str_vec[i]<<endl;
+        }
+        print_spaces(max_length-max_2);
+        print_dash(max_2);
+    }
+    else
     {
-        print_spaces(max_all-i-str_vec[i].length());
-        cout<<str_vec[i]<<endl;
+        max_2 = max(snd.length()+1,res.length());
+        print_spaces(max_length-max_2);
+        print_dash(max_2);
     }
-    }
-    print_dash(max_all);
-    cout<<res<<endl;
-}
-
-int main()
-{
     
-    int n;
-    cin>>n;
-    for(int i=0;i<n;i++)
-    {
-    //SPLIT
-   string input;
-   cin>>input;
-   int counter1 = 0;
-   char znak;
-   while(znak = input[counter1])
-   {
-       if(znak > 47) counter1++;
-       else break;
-   }
-   string first = input.substr(0,counter1);
-   string second = input.substr(counter1+1);
-
-  
-   int mov = 0;
-   string wynik;
-   string helper;
-
-   if(znak=='+')
-   {
-       dodaj(first,second,helper);
-   }
-   else if (znak == '-')
-   {
-       odejmij(first,second,helper);
-       delete_leading_0s(helper);
-   }
-   else //znak == '*'
-   {
-        vector<string> vec;
-        mnoz(first,second,helper,vec);
-        print_mul(first,second,helper,vec);
-   }
-   
-      wynik=helper;
-
-      if(znak!='*') print_add_sub(znak,first,second,wynik);
-      cout<<"\n\n";
-    }//od inputów
-   
-   return 0;
+    print_spaces(max_length-res.length());
+    cout<<res<<endl;
 }
