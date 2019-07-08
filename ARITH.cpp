@@ -1,7 +1,7 @@
 #include <iostream>
-#include <string.h>
-#include <vector>
-#include <algorithm>
+#include <string.h>     //for string
+#include <vector>       //for vector class
+#include <algorithm>    //for max function
 
 using namespace std;
 
@@ -72,7 +72,7 @@ void parseInput(int input_number)
       
         string result;
     
-        if(sign == '+')
+        if (sign == '+')
         {
             add(first,second,result);
             print_add_sub(sign,first,second,result);
@@ -98,57 +98,61 @@ void parseInput(int input_number)
 void add(string &fst, string &snd, string & res)
 {
     res.erase(0);
-    char cyfra;
-    int overflow=0;
-    int pos1=fst.length()-1;
-    int pos2= snd.length()-1;
+    char character;
+    int overflow = 0;
+    int pos1 = fst.length()-1;
+    int pos2 = snd.length()-1;
+    
     for(; pos1>=0 || pos2>=0 ; pos1--, pos2-- )
     {
-        if(pos1>=0 && pos2>=0) {cyfra = fst[pos1] + snd[pos2];}
-        else if (pos1< 0) {cyfra = '0'+ snd[pos2];}
-        else {cyfra = fst[pos1] + '0';}
+        if (pos1>=0 && pos2>=0) {character = fst[pos1] + snd[pos2];}
+        else if (pos1< 0) {character = '0'+ snd[pos2];}
+        else {character = fst[pos1] + '0';}
            
-        cyfra+=overflow;
-        cyfra-=48;
-        if(cyfra>57) {cyfra-=10; overflow=1;}
+        character +=overflow;
+        character -=48; //convert char to int '0' -> 0
+        
+        if (character>57) {character-=10; overflow=1;} //manage overflow
         else overflow=0;
-        //cout<<cyfra;
-        res.push_back(cyfra);
+        
+        res.push_back(character);
       }
-      if(overflow!=0) res.push_back(overflow+48);
+      if (overflow!=0) res.push_back(overflow+48);
       str_reverse(res);
 }
 
 void sub(string &fst, string &snd, string & res)
 {
-    string fst_copy(fst);
     res.erase(0);
-    int pos1=fst.length()-1;
-    int pos2= snd.length()-1;
+    // sub function modify the fst string so wee need a copy
+    string fst_copy(fst); 
+    int pos1 = fst.length()-1;
+    int pos2 = snd.length()-1;
+    
     for(;pos1>=0 || pos2>=0;pos1--,pos2--)
        {
            if(pos2>=0)
            {
-               if(fst_copy[pos1]>=snd[pos2]) res.push_back(fst_copy[pos1] - snd[pos2] + 48);
+               if (fst_copy[pos1]>=snd[pos2]) res.push_back(fst_copy[pos1] - snd[pos2] + 48);
                else if (fst_copy[pos1]<snd[pos2])
                {
-                   for(int j=(pos1-1);j>=0;j--)
+                   for(int i=(pos1-1); i>=0; i--)
                    {
-                       if(fst_copy[j]!='0')
+                       if(fst_copy[i]!='0')
                        {
-                           fst_copy[j]--;
+                           fst_copy[i]--;
                            break;
                        }
                        else
                        {
-                           fst_copy[j]='9';
+                           fst_copy[i]='9';
                        }
                    }
-                   fst_copy[pos1]+=10;
+                   fst_copy[pos1] +=10;
                    res.push_back(fst_copy[pos1] - snd[pos2] + 48);
                }
            }
-           else
+           else //fst.len() > snd.length()
            {
                res.push_back(fst_copy[pos1]);
            }
@@ -159,15 +163,16 @@ void sub(string &fst, string &snd, string & res)
 void mul(string &fst, string &snd, string &res, vector<string> & str_vec)
 {
         res.erase(0);
-        int z1,z2;
-        int overflow=0;
+        int z1,z2; // places for numbers being multiplied
+        int overflow = 0;
         int product;
         int r_mod;
         int pos1=fst.length()-1;
         int pos2= snd.length()-1;
-        //vector<string> str_vec;
-       for(;pos2>=0;pos2--)
-       {
+        
+        
+        for(;pos2>=0;pos2--)
+        {
            overflow=0;
            if(snd[pos2]=='0')
            {str_vec.push_back("0");continue;}
@@ -182,56 +187,54 @@ void mul(string &fst, string &snd, string &res, vector<string> & str_vec)
                overflow = (product-r_mod)/10;
                res.push_back(r_mod+48);
            }
+           //checks if the last multiplication has left an overflow
            if(overflow!=0) res.push_back(overflow+48);
-           pos1=fst.length()-1;
+           pos1 = fst.length()-1;
            str_reverse(res);
            str_vec.push_back(res);
-           //cout<<"asdasda->"<<res<<endl;
-       }
+        }
        
-       //dodanie zer
-       for(int i=0;i<str_vec.size();i++)
-       {
-           string a = str_vec[i];
-           //if(a=="0") continue;
+        //Adding zeros to numbers -> we need it for adding sub results
+        for(int i=0;i<str_vec.size();i++)
+        {
+           string num = str_vec[i];
            for(int j=0;j<i;j++)
            {
-               a+="0";
+                num +="0";
            }
-           str_vec[i]=a;
-       }
+           str_vec[i] = num;
+        }
        
-       string helper2;
-       res=str_vec[0];
-       for(int i=1;i<str_vec.size();i++)
-       {
-           //cout<<"Res: "<<res<<" + "<< str_vec[i]<<" = ";
-           add(res,str_vec[i],helper2);
-           //cout<<helper2<<endl;
-           res=helper2;
-           helper2.erase(0);
-           //cout<<"Res po h2.rease: "<<res<<endl;
-       }
+        //Summing sub results
+        string helper;
+        res=str_vec[0];
+        for(int i=1;i<str_vec.size();i++)
+        {
+           add(res,str_vec[i],helper);
+           res=helper;
+           helper.erase(0);
+        }
        
-       for(int i=1;i<str_vec.size();i++)
-       {
+        //Deleting zeros to acquire true partial results
+        for(int i=1;i<str_vec.size();i++)
+        {
            str_vec[i].erase(str_vec[i].length()-i);
-       }
+        }
        
 }
 
 void print_add_sub(char znak, string & fst, string &snd, string &res)
 {
     int max_length = max( max(fst.length(),snd.length()+1), res.length() );
-    int max_1 = max(snd.length()+1,res.length());
+    int max_top_bar = max(snd.length()+1,res.length());
   
     print_spaces(max_length - fst.length());
     cout<<fst<<endl;
     print_spaces(max_length - snd.length() -1);
     cout<<znak;
     cout<<snd<<endl;
-    print_spaces(max_length-max_1);
-    print_dash(max_1);
+    print_spaces(max_length-max_top_bar);
+    print_dash(max_top_bar);
     print_spaces(max_length - res.length());
     cout<<res;
   
@@ -240,8 +243,8 @@ void print_add_sub(char znak, string & fst, string &snd, string &res)
 void print_mul(string & fst, string &snd, string &res, vector<string> str_vec)
 {
     int max_length = max( max(fst.length(),snd.length()+1), res.length() );
-    int max_1 = max( snd.length() +1, str_vec[0].length() );
-    int max_2;
+    int max_top_bar = max( snd.length() +1, str_vec[0].length() );
+    int max_bottom_bar;
     
     print_spaces(max_length-fst.length());
     cout<<fst<<endl;
@@ -249,24 +252,24 @@ void print_mul(string & fst, string &snd, string &res, vector<string> str_vec)
     cout<<'*';
     cout<<snd<<endl;
     
-    if(str_vec.size()!=1)
+    if(snd.length()!=1)
     {
-        max_2 = max( res.length(), str_vec[str_vec.size()-1].length() );
-        print_spaces(max_length-max_1);
-        print_dash(max_1);
+        max_bottom_bar = max( res.length(), str_vec[str_vec.size()-1].length() );
+        print_spaces(max_length-max_top_bar);
+        print_dash(max_top_bar);
         for(int i=0;i<str_vec.size();i++)
         {
             print_spaces(max_length-i-str_vec[i].length());
             cout<<str_vec[i]<<endl;
         }
-        print_spaces(max_length-max_2);
-        print_dash(max_2);
+        print_spaces(max_length-max_bottom_bar);
+        print_dash(max_bottom_bar);
     }
-    else
+    else //there is only 1 partial result -> different result printing
     {
-        max_2 = max(snd.length()+1,res.length());
-        print_spaces(max_length-max_2);
-        print_dash(max_2);
+        max_bottom_bar = max(snd.length()+1,res.length());
+        print_spaces(max_length-max_bottom_bar);
+        print_dash(max_bottom_bar);
     }
     
     print_spaces(max_length-res.length());
