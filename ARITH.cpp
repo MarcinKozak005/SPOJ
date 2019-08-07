@@ -10,7 +10,7 @@ void parseInput(int input_number);
 void add(string &fst, string &snd, string & res);
 void sub(string &fst, string &snd, string & res);
 void mul(string &fst, string &snd, string &res, vector<string> & str_vec);
-void print_add_sub(char znak, string & fst, string &snd, string &res);
+void print_add_sub(char sign, string & fst, string &snd, string &res);
 void print_mul(string & fst, string &snd, string &res, vector<string> str_vec);
 
 void print_spaces(int num)
@@ -26,9 +26,7 @@ void print_dash(int num)
 
 void str_reverse(string& str)
 {
-    string tmp;
-    for(int i=str.length()-1;i>=0;i--) tmp.push_back(str[i]);
-    str=tmp;
+    reverse(str.begin(),str.end());
 }
 
 void delete_leading_0s(string & str)
@@ -223,7 +221,7 @@ void mul(string &fst, string &snd, string &res, vector<string> & str_vec)
        
 }
 
-void print_add_sub(char znak, string & fst, string &snd, string &res)
+void print_add_sub(char sign, string & fst, string &snd, string &res)
 {
     int max_length = max( max(fst.length(),snd.length()+1), res.length() );
     int max_top_bar = max(snd.length()+1,res.length());
@@ -231,7 +229,7 @@ void print_add_sub(char znak, string & fst, string &snd, string &res)
     print_spaces(max_length - fst.length());
     cout<<fst<<endl;
     print_spaces(max_length - snd.length() -1);
-    cout<<znak;
+    cout<<sign;
     cout<<snd<<endl;
     print_spaces(max_length-max_top_bar);
     print_dash(max_top_bar);
