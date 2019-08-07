@@ -74,15 +74,6 @@ int delete_parentheses(int start, string& str)
     if(end+1 >= str.length()) next=true;
     if(start-1 < 0) prev=true;
     
-    //Good for Debuging
-    // cout<<" 0:"<<str<<endl;
-    // cout<<"-----"<<endl;
-    // cout<<"op_prior: "<<op_prior<<endl;
-    // cout<<"op_p: "<<op_p<< " op_p_prior: "<<op_p_prior<<endl;
-    // cout<<"op_n: "<<op_n<<" op_n_prior: "<<op_n_prior<<endl;
-    // cout<<"-----"<<endl;
-    
-    
     if(start+2==end)
     {   
         str.erase(end,1);
@@ -90,16 +81,13 @@ int delete_parentheses(int start, string& str)
         return end-1;
     }
     
-    //cout<<prev<<" "<<next<<endl;
     if(next==true && prev==true)
     {
         str.erase(end,1);
         str.erase(start,1);
-        //cout<<" 1:"<<str<<endl;
         return end-1;
     }
     
-    //cout<<" 2:"<<str<<endl;
     return end+1;
 }
 
