@@ -9,8 +9,8 @@ void pattern(int lines, int columns)
 	{
 		for(int j=0; j<columns; ++j)
 		{
-		    if( (j+i)%2 == 0) cout<<"*";
-		    else cout<<".";
+			if( (j+i)%2 == 0) cout<<"*";
+			else cout<<".";
 		}
 		cout<<endl;
 	}
