@@ -3,15 +3,14 @@
 
 using namespace std;
 
-
 void pattern(int lines, int columns)
 {
-	for(int i=0;i<lines;++i)
+	for(int i=0; i<lines; ++i)
 	{
-		for(int j=0;j<columns;++j)
+		for(int j=0; j<columns; ++j)
 		{
-		    if((j==0 || j==columns-1) || (i==0 || i==lines-1)) cout<<"*";
-		    else cout<<".";
+			if( (j==0 || j==columns-1) || (i==0 || i==lines-1) ) cout<<"*";
+			else cout<<".";
 		}
 		cout<<endl;
 	}
@@ -22,8 +21,8 @@ void parse_input(int n)
 	int lines, columns;
 	for(int i=0;i<n;++i)
 	{
-	    cin>>lines;
-	    cin>>columns;
+		cin>>lines;
+		cin>>columns;
 		pattern(lines,columns);
 		cout<<endl;
 	}
