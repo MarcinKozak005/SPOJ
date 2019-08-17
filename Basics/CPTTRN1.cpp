@@ -21,8 +21,8 @@ void parse_input(int n)
 	int lines, columns;
 	for(int i=0; i<n ;++i)
 	{
-	    cin>>lines;
-	    cin>>columns;
+		cin>>lines;
+	    	cin>>columns;
 		
 		pattern(lines,columns);
 		cout<<endl;
