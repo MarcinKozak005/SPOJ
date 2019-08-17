@@ -3,10 +3,9 @@
 
 using namespace std;
 
-
 void half_of_half(string & x)
 {
-	for(int i=0;i<x.length()/2;++i)
+	for(int i=0; i<x.length()/2; ++i)
 	{
 		if(i%2 == 0) cout<<x[i];
 	}
@@ -18,7 +17,7 @@ void parse_input(int n)
 	string sequence;
 	for(int i=0;i<n;++i)
 	{
-	  cin>>sequence;
+		cin>>sequence;
 		half_of_half(sequence);
 	}
 }
