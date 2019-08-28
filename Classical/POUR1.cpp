@@ -1,71 +1,85 @@
-// Example program
 #include <iostream>
-#include <string>
-#include <algorithm>
-#include <vector>
+#include <algorithm>    //for min() and max()
 
 using namespace std;
 
-int fillL_LtoH(int high, int low)
+int min_steps(int a,int b, int wanted)
 {
-    return 2*(high-(high%low))/low +2;
-}
+    int low = min(a,b);
+    int high = max(a,b);
+    
+    bool found1 = false;
+    bool found2 = false;
+    
+    int current=0;
+    int steps1=0;
+    int steps2=0;
+    
+    if(wanted==high || wanted==low) return 1;
+    
+    //r -> rest in the big bucket.
+    //First method: filling big bucket with small one until current==wanted or until we make a circle (r will be again 0 and steps1!=0)
+    for(int r=0; r!=0||steps1==0;)
+    {
+        while(current<high)
+        {
+           if(wanted==current)
+           {
+               found1=true;
+               break;
+           }
+           current+=low;
+           steps1+=2;
+        }
+        if(found1) break;
+        
+        r=current-high;
+        current=current-high;
+        steps1+=2;
+    }
+    if(wanted>0 && wanted<low) steps1-=2;
+    
+    
+    //Second method: pouring form the big bucket int the small one. Until we find or make a circle
+    current=high;
+    steps2=1;
+    for(int r=high; r!=high||steps2==1;)
+    {
+        while(current>0)
+        {
+            if(wanted==current)
+            {
+                found2=true;
+                break;
+            }
+            current-=low;
+            steps2+=2;
+        }
+        if(found2) break;
+        
+        r=current+high;
+        current+=high;
+        steps2+=2;
+    }
+    if(steps2!=1) steps2--;
 
-int HtoX_emptyX(int high, int low)
-{
-    return 2*(high-(high%low))/low;
-}
-
-int min_steps(int a,int b, int c)
-{
-    // int low = min(a,b);
-    // int high = max(a,b);
-    
-    // int r= high-low;
-    // int z= -(high%low)+low;
-    
-    // vector<int> steps;
-    
-    // //if( c ==(high-z)) steps.push_back(fillL_LtoH(high,low)+3);
-    // if(c%low == high%low) steps.push_back(2*(high-c)/low);
-    // if(c%low==0) steps.push_back(2*c/low);
-    // if(c==)
-    
-    // //if( c ==(low+z)) steps.push_back(fillL_LtoH(high,low)+4);
-    // //if( c == (low-z)) steps.push_back(HtoX_emptyX(high,low)+1);
-    // //if(c == (low-r)) steps.push_back(fillL_LtoH(high,low));
-    
-    // //if(c == r) steps.push_back(2);
-    // //if(c == z) steps.push_back(fillL_LtoH(high,low));
-    
-    // if(steps.empty()) return -1;
-    // return *min_element(steps.begin(),steps.end());
-    
-    bool found=false;
-    int begin=0;
-    
-    
-    
-    
-    
-    
+    //Final results
+    if(found1&&found2) return min(steps1,steps2);
+    else return -1;
 }
 
 
 void parse_input(int n)
 {
-    int a,b,c;
+    int a,b,wanted;
     for(int i=0;i<n;++i)
     {
         cin>>a;
         cin>>b;
-        cin>>c;
-        cout<<min_steps(a,b,c)<<endl;
+        cin>>wanted;
+        cout<<min_steps(a,b,wanted)<<endl;
     }
 }
-
-
-
 
 int main()
 {
